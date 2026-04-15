@@ -82,4 +82,12 @@ public class AssignmentService {
     public List<Assignment> listByEmployee(Long employeeId) {
         return assignmentRepository.findByEmployeeId(employeeId);
     }
+
+    public List<Assignment> listAll() {
+        return assignmentRepository.findAll();
+    }
+
+    public List<Assignment> listReturned() {
+        return assignmentRepository.findByStatus(AssignmentStatus.DEVUELTA);
+    }
 }
