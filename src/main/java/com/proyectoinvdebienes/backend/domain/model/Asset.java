@@ -1,5 +1,6 @@
 package com.proyectoinvdebienes.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.proyectoinvdebienes.backend.domain.enums.AssetStatus;
 import com.proyectoinvdebienes.backend.domain.enums.TagType;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@JsonIgnoreProperties({"purchaseInvoice", "currentCustodian"})
 public class Asset extends BaseEntity {
 
     @Column(nullable = false, unique = true)
