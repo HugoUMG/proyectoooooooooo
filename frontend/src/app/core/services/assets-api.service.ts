@@ -58,6 +58,10 @@ export class AssetsApiService {
     return this.http.get<Assignment[]>(`${this.base}/assignments/employee/${employeeId}`);
   }
 
+  listReturnedAssignments(): Observable<Assignment[]> {
+    return this.http.get<Assignment[]>(`${this.base}/assignments/returns`);
+  }
+
   requestDisposal(payload: {
     assetId: number;
     reason: string;

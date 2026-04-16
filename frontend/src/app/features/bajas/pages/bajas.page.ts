@@ -14,19 +14,38 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
 
       <div class="card">
         <form [formGroup]="requestForm" (ngSubmit)="requestDisposal()" class="grid grid-3">
-          <input type="number" formControlName="assetId" placeholder="ID activo" />
-          <input formControlName="reason" placeholder="Motivo" />
-          <input formControlName="disposalType" placeholder="Tipo" />
-          <input formControlName="requestedBy" placeholder="Solicitado por" />
+          <label>ID activo
+            <input type="number" formControlName="assetId" placeholder="Ej. 1" />
+          </label>
+          <label>Motivo
+            <input formControlName="reason" placeholder="Ej. Fin de vida útil" />
+          </label>
+          <label>Estado inicial de la solicitud
+            <select formControlName="disposalType">
+              <option value="SOLICITADA">SOLICITADA</option>
+              <option value="APROBADA">APROBADA</option>
+              <option value="RECHAZADA">RECHAZADA</option>
+              <option value="EJECUTADA">EJECUTADA</option>
+            </select>
+          </label>
+          <label>Solicitado por
+            <input formControlName="requestedBy" placeholder="Ej. jefe_inventarios" />
+          </label>
           <button type="submit">Solicitar baja</button>
         </form>
       </div>
 
       <div class="card">
         <form [formGroup]="approveForm" (ngSubmit)="approveDisposal()" class="grid grid-3">
-          <input type="number" formControlName="id" placeholder="ID baja" />
-          <input formControlName="approvedBy" placeholder="Aprobado por" />
-          <input type="number" formControlName="finalValue" placeholder="Valor final" />
+          <label>ID baja
+            <input type="number" formControlName="id" placeholder="Ej. 1" />
+          </label>
+          <label>Aprobado por
+            <input formControlName="approvedBy" placeholder="Ej. director_finanzas" />
+          </label>
+          <label>Valor final
+            <input type="number" formControlName="finalValue" placeholder="Ej. 1200.00" />
+          </label>
           <button type="submit">Aprobar baja</button>
         </form>
       </div>
@@ -45,11 +64,24 @@ export class BajasPage implements OnInit {
   pending: Disposal[] = [];
   message = '';
 
-  readonly requestForm = this.fb.nonNullable.group({ assetId: [0, [Validators.required, Validators.min(1)]], reason: ['', Validators.required], disposalType: ['', Validators.required], requestedBy: ['', Validators.required] });
-  readonly approveForm = this.fb.nonNullable.group({ id: [0, [Validators.required, Validators.min(1)]], approvedBy: ['', Validators.required], finalValue: [0, [Validators.required, Validators.min(0)]] });
+  readonly requestForm = this.fb.group({ assetId: [null, [Validators.required, Validators.min(1)]], reason: ['', Validators.required], disposalType: ['SOLICITADA', Validators.required], requestedBy: ['', Validators.required] });
+  readonly approveForm = this.fb.group({ id: [null, [Validators.required, Validators.min(1)]], approvedBy: ['', Validators.required], finalValue: [null, [Validators.required, Validators.min(0)]] });
 
   ngOnInit(): void { this.loadPending(); }
-  requestDisposal(): void { if (this.requestForm.invalid) return; this.api.requestDisposal(this.requestForm.getRawValue()).subscribe({ next: () => this.loadPending(), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
-  approveDisposal(): void { if (this.approveForm.invalid) return; const { id, approvedBy, finalValue } = this.approveForm.getRawValue(); this.api.approveDisposal(id, { approvedBy, finalValue }).subscribe({ next: () => this.loadPending(), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
+  requestDisposal(): void {
+    if (this.requestForm.invalid) return;
+    const payload = this.requestForm.getRawValue();
+    this.api.requestDisposal({
+      assetId: payload.assetId!,
+      reason: payload.reason!,
+      disposalType: payload.disposalType!,
+      requestedBy: payload.requestedBy!
+    }).subscribe({ next: () => this.loadPending(), error: (err) => (this.message = err?.error?.error ?? 'Error') });
+  }
+  approveDisposal(): void {
+    if (this.approveForm.invalid) return;
+    const { id, approvedBy, finalValue } = this.approveForm.getRawValue();
+    this.api.approveDisposal(id!, { approvedBy: approvedBy!, finalValue: finalValue! }).subscribe({ next: () => this.loadPending(), error: (err) => (this.message = err?.error?.error ?? 'Error') });
+  }
   loadPending(): void { this.api.listPendingDisposals().subscribe({ next: (rows) => (this.pending = rows), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
 }
