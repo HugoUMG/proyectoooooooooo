@@ -83,8 +83,13 @@ CREATE TABLE IF NOT EXISTS user_account (
   username VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(50) NOT NULL,
+  employee_id BIGINT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY uk_user_account_username (username)
+  UNIQUE KEY uk_user_account_username (username),
+  UNIQUE KEY uk_user_account_employee (employee_id),
+  KEY idx_user_account_employee (employee_id),
+  CONSTRAINT fk_user_account_employee
+    FOREIGN KEY (employee_id) REFERENCES employee(id)
 ) ENGINE=InnoDB;
 
 -- =====================================================
@@ -308,6 +313,7 @@ Con esto ya queda habilitado el ciclo de vida completo para consultas/reportes d
 ## 5) Ingreso y usuarios (explícito)
 
 El backend ahora autentica usuarios desde la tabla `user_account` (HTTP Basic).
+Ahora `user_account` se vincula con `employee` mediante `employee_id` para habilitar validaciones y permisos por tipo de usuario.
 
 Credencial administrador por defecto:
 
@@ -326,9 +332,18 @@ Payload ejemplo:
 {
   "username": "operador1",
   "password": "operador123",
-  "role": "EMPLEADO"
+  "role": "EMPLEADO",
+  "employeeId": 1
 }
 ```
+
+### Menús/módulos por rol
+
+- `ADMINISTRADOR`: acceso total.
+- `COMPRAS`: adquisiciones (facturas, altas de compra).
+- `INVENTARIO`: inventario, asignaciones, bajas y reportes operativos.
+- `EMPLEADO`: portal propio para ver activos asignados.
+- `FINANZAS`: reportes financieros/contables.
 
 ---
 

@@ -18,13 +18,15 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers("/api/reports/**").hasAnyRole("ADMINISTRADOR", "FINANZAS")
+                        .requestMatchers("/api/reports/**").hasAnyRole("ADMINISTRADOR", "FINANZAS", "INVENTARIO")
                         .requestMatchers("/api/acquisitions/**").hasAnyRole("ADMINISTRADOR", "COMPRAS")
                         .requestMatchers("/api/data/**").hasAnyRole("ADMINISTRADOR", "COMPRAS", "INVENTARIO")
                         .requestMatchers("/api/inventory/**").hasAnyRole("ADMINISTRADOR", "INVENTARIO")
                         .requestMatchers("/api/assignments/**").hasAnyRole("ADMINISTRADOR", "INVENTARIO")
                         .requestMatchers("/api/disposals/**").hasAnyRole("ADMINISTRADOR", "INVENTARIO")
+                        .requestMatchers("/api/employee/**").hasAnyRole("EMPLEADO", "ADMINISTRADOR")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());
         return http.build();

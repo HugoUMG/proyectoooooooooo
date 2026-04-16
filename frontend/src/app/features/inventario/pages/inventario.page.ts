@@ -17,17 +17,34 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
 
       <div class="card">
         <form [formGroup]="assetForm" (ngSubmit)="createAsset()" class="grid grid-3">
-          <input formControlName="name" placeholder="Nombre del bien" />
-          <input formControlName="serialNumber" placeholder="Serie" />
+          <label>Nombre del bien
+            <input formControlName="name" placeholder="Ej. Laptop Dell Latitude 5440" />
+          </label>
+          <label>Número de serie
+            <input formControlName="serialNumber" placeholder="Ej. SN-2026-0001" />
+          </label>
           <input formControlName="acquisitionDate" type="date" />
-          <input formControlName="acquisitionCost" type="number" placeholder="Costo" />
-          <select formControlName="tagType"><option value="QR">QR</option><option value="RFID">RFID</option></select>
-          <input formControlName="tagValue" placeholder="Etiqueta" />
-          <input formControlName="location" placeholder="Ubicación" />
-          <input formControlName="purchaseInvoiceId" type="number" placeholder="Factura ID" />
-          <input formControlName="description" placeholder="Descripción" />
+          <label>Costo de adquisición
+            <input formControlName="acquisitionCost" type="number" placeholder="Ej. 12999.90" />
+          </label>
+          <label>Tipo de etiqueta
+            <select formControlName="tagType"><option value="QR">QR</option><option value="RFID">RFID</option></select>
+          </label>
+          <label>Valor de etiqueta
+            <input formControlName="tagValue" placeholder="Ej. TAG-0001" />
+          </label>
+          <label>Ubicación
+            <input formControlName="location" placeholder="Ej. Almacén central - Estante B3" />
+          </label>
+          <label>ID de factura
+            <input formControlName="purchaseInvoiceId" type="number" placeholder="Ej. 1" />
+          </label>
+          <label>Descripción
+            <input formControlName="description" placeholder="Ej. Equipo asignable para desarrollo" />
+          </label>
           <button type="submit">Registrar activo</button>
         </form>
+        <small class="muted">Estados permitidos en backend: EN_ALMACEN, ASIGNADO, EN_TRASLADO, EN_REVISION, DADO_DE_BAJA.</small>
         <p *ngIf="message">{{ message }}</p>
       </div>
 
@@ -47,23 +64,35 @@ export class InventarioPage implements OnInit {
   assets: Asset[] = [];
   message = '';
 
-  readonly assetForm = this.fb.nonNullable.group({
+  readonly assetForm = this.fb.group({
     assetCode: [''],
     name: ['', Validators.required],
     description: [''],
     serialNumber: ['', Validators.required],
     acquisitionDate: ['', Validators.required],
-    acquisitionCost: [0, [Validators.required, Validators.min(0.01)]],
+    acquisitionCost: [null, [Validators.required, Validators.min(0.01)]],
     tagType: this.fb.nonNullable.control<'QR' | 'RFID'>('QR', Validators.required),
     tagValue: ['', Validators.required],
     location: ['', Validators.required],
-    purchaseInvoiceId: [0, [Validators.required, Validators.min(1)]]
+    purchaseInvoiceId: [null, [Validators.required, Validators.min(1)]]
   });
 
   ngOnInit(): void { this.loadAssets(); }
   createAsset(): void {
     if (this.assetForm.invalid) return;
-    this.api.createAsset(this.assetForm.getRawValue()).subscribe({ next: () => this.loadAssets(), error: (err) => (this.message = err?.error?.error ?? 'Error') });
+    const payload = this.assetForm.getRawValue();
+    this.api.createAsset({
+      assetCode: payload.assetCode ?? undefined,
+      name: payload.name!,
+      description: payload.description ?? undefined,
+      serialNumber: payload.serialNumber!,
+      acquisitionDate: payload.acquisitionDate!,
+      acquisitionCost: payload.acquisitionCost!,
+      tagType: payload.tagType!,
+      tagValue: payload.tagValue!,
+      location: payload.location!,
+      purchaseInvoiceId: payload.purchaseInvoiceId!
+    }).subscribe({ next: () => this.loadAssets(), error: (err) => (this.message = err?.error?.error ?? 'Error') });
   }
   loadAssets(): void {
     this.api.listAssets().subscribe({ next: (assets) => (this.assets = assets), error: () => (this.message = 'No se pudo cargar inventario') });

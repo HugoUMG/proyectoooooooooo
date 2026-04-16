@@ -58,6 +58,10 @@ export class AssetsApiService {
     return this.http.get<Assignment[]>(`${this.base}/assignments/employee/${employeeId}`);
   }
 
+  listReturnedAssignments(): Observable<Assignment[]> {
+    return this.http.get<Assignment[]>(`${this.base}/assignments/returns`);
+  }
+
   requestDisposal(payload: {
     assetId: number;
     reason: string;
@@ -76,8 +80,12 @@ export class AssetsApiService {
   }
 
 
-  createUser(payload: { username: string; password: string; role: 'ADMINISTRADOR' | 'COMPRAS' | 'INVENTARIO' | 'EMPLEADO' | 'FINANZAS' }): Observable<AdminUser> {
+  createUser(payload: { username: string; password: string; role: 'ADMINISTRADOR' | 'COMPRAS' | 'INVENTARIO' | 'EMPLEADO' | 'FINANZAS'; employeeId?: number }): Observable<AdminUser> {
     return this.http.post<AdminUser>(`${this.base}/admin/users`, payload);
+  }
+
+  myAssignments(): Observable<Assignment[]> {
+    return this.http.get<Assignment[]>(`${this.base}/employee/me/assignments`);
   }
 
   investedSummary(): Observable<InvestedSummary> {

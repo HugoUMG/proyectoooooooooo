@@ -1,5 +1,6 @@
 package com.proyectoinvdebienes.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.proyectoinvdebienes.backend.domain.enums.AssignmentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 
 @Entity
+@JsonIgnoreProperties({"employee"})
 public class Assignment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

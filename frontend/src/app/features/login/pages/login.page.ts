@@ -53,7 +53,12 @@ export class LoginPage {
     }
 
     const { username, password } = this.form.getRawValue();
-    this.auth.login(username.trim(), password);
-    this.router.navigateByUrl('/menu');
+    this.auth.login(username.trim(), password).subscribe({
+      next: () => this.router.navigateByUrl('/menu'),
+      error: () => {
+        this.auth.logout();
+        this.error = 'Credenciales inválidas o usuario sin permisos.';
+      }
+    });
   }
 }
