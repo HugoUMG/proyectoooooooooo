@@ -43,12 +43,15 @@ public class ReportsController {
 
     @GetMapping("/invested-assets/export")
     public ResponseEntity<byte[]> exportInvestedAssets(@RequestParam(defaultValue = "excel") String format) {
-        byte[] payload = reportService.exportInvestedAssetsCsv();
+        boolean pdfRequested = "pdf".equalsIgnoreCase(format);
+        byte[] payload = pdfRequested
+                ? reportService.exportInvestedAssetsPdf()
+                : reportService.exportInvestedAssetsCsv();
         String fileName = "reporte-bienes-invertidos." + ("pdf".equalsIgnoreCase(format) ? "pdf" : "csv");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDisposition(ContentDisposition.attachment().filename(fileName).build());
-        headers.setContentType("pdf".equalsIgnoreCase(format) ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("text/csv"));
+        headers.setContentType(pdfRequested ? MediaType.APPLICATION_PDF : MediaType.parseMediaType("text/csv"));
 
         return ResponseEntity.ok().headers(headers).body(payload);
     }
