@@ -14,18 +14,19 @@ import { AuthService } from '../../../core/services/auth.service';
         <div class="between">
           <div>
             <h1>Interfaz General (Menú)</h1>
-            <p class="muted">Sesión activa: <strong>{{ auth.username() }}</strong></p>
+            <p class="muted">Sesión activa: <strong>{{ auth.username() }}</strong> ({{ auth.role() }})</p>
           </div>
           <button type="button" (click)="logout()">Cerrar sesión</button>
         </div>
 
-        <p>Abre cada módulo en una pestaña nueva:</p>
+        <p>Selecciona un módulo según permisos:</p>
         <div class="grid grid-3">
-          <button type="button" (click)="openTab('/adquisiciones')">Adquisiciones</button>
-          <button type="button" (click)="openTab('/inventario')">Inventario</button>
-          <button type="button" (click)="openTab('/asignaciones')">Asignaciones</button>
-          <button type="button" (click)="openTab('/bajas')">Bajas</button>
-          <button type="button" (click)="openTab('/reportes')">Reportes</button>
+          <button *ngIf="auth.canAccessModule('adquisiciones')" type="button" (click)="go('/adquisiciones')">Adquisiciones</button>
+          <button *ngIf="auth.canAccessModule('inventario')" type="button" (click)="go('/inventario')">Inventario</button>
+          <button *ngIf="auth.canAccessModule('asignaciones')" type="button" (click)="go('/asignaciones')">Asignaciones</button>
+          <button *ngIf="auth.canAccessModule('bajas')" type="button" (click)="go('/bajas')">Bajas</button>
+          <button *ngIf="auth.canAccessModule('reportes')" type="button" (click)="go('/reportes')">Reportes</button>
+          <button *ngIf="auth.canAccessModule('empleado')" type="button" (click)="go('/empleado')">Mis activos</button>
         </div>
       </div>
 
@@ -43,6 +44,7 @@ import { AuthService } from '../../../core/services/auth.service';
             <option value="EMPLEADO">EMPLEADO</option>
             <option value="FINANZAS">FINANZAS</option>
           </select>
+          <input type="number" formControlName="employeeId" placeholder="employeeId (solo EMPLEADO)" />
           <button type="submit">Crear usuario</button>
         </form>
 
@@ -58,17 +60,18 @@ export class MenuPage {
   readonly auth = inject(AuthService);
 
   message = '';
-  readonly userForm = this.fb.nonNullable.group({
+  readonly userForm = this.fb.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
     role: this.fb.nonNullable.control<'ADMINISTRADOR' | 'COMPRAS' | 'INVENTARIO' | 'EMPLEADO' | 'FINANZAS'>(
       'EMPLEADO',
       Validators.required
-    )
+    ),
+    employeeId: [null]
   });
 
-  openTab(path: string): void {
-    window.open(path, '_blank');
+  go(path: string): void {
+    this.router.navigateByUrl(path);
   }
 
   logout(): void {
@@ -78,7 +81,13 @@ export class MenuPage {
 
   createUser(): void {
     if (this.userForm.invalid) return;
-    this.api.createUser(this.userForm.getRawValue()).subscribe({
+    const payload = this.userForm.getRawValue();
+    this.api.createUser({
+      username: payload.username!,
+      password: payload.password!,
+      role: payload.role,
+      employeeId: payload.employeeId ?? undefined
+    }).subscribe({
       next: (user) => (this.message = `Usuario creado: ${user.username} (${user.role})`),
       error: (err) => (this.message = err?.error?.error ?? 'No fue posible crear el usuario.')
     });

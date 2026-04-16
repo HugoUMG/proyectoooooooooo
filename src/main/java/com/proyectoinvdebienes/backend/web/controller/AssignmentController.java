@@ -39,4 +39,14 @@ public class AssignmentController {
     public List<Assignment> byEmployee(@PathVariable Long employeeId) {
         return assignmentService.listByEmployee(employeeId);
     }
+
+    @GetMapping
+    public List<Assignment> allAssignments() {
+        return assignmentService.listAll();
+    }
+
+    @GetMapping("/returns")
+    public List<Assignment> returnedAssignments() {
+        return assignmentService.listReturned();
+    }
 }

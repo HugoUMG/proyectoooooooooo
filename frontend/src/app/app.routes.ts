@@ -14,29 +14,40 @@ export const routes: Routes = [
   {
     path: 'adquisiciones',
     canActivate: [authGuard],
+    data: { roles: ['ADMINISTRADOR', 'COMPRAS'] },
     loadComponent: () =>
       import('./features/adquisiciones/pages/adquisiciones.page').then((m) => m.AdquisicionesPage)
   },
   {
     path: 'inventario',
     canActivate: [authGuard],
+    data: { roles: ['ADMINISTRADOR', 'INVENTARIO'] },
     loadComponent: () => import('./features/inventario/pages/inventario.page').then((m) => m.InventarioPage)
   },
   {
     path: 'asignaciones',
     canActivate: [authGuard],
+    data: { roles: ['ADMINISTRADOR', 'INVENTARIO'] },
     loadComponent: () =>
       import('./features/asignaciones/pages/asignaciones.page').then((m) => m.AsignacionesPage)
   },
   {
     path: 'bajas',
     canActivate: [authGuard],
+    data: { roles: ['ADMINISTRADOR', 'INVENTARIO'] },
     loadComponent: () => import('./features/bajas/pages/bajas.page').then((m) => m.BajasPage)
   },
   {
     path: 'reportes',
     canActivate: [authGuard],
+    data: { roles: ['ADMINISTRADOR', 'FINANZAS', 'INVENTARIO'] },
     loadComponent: () => import('./features/reportes/pages/reportes.page').then((m) => m.ReportesPage)
+  },
+  {
+    path: 'empleado',
+    canActivate: [authGuard],
+    data: { roles: ['EMPLEADO', 'ADMINISTRADOR'] },
+    loadComponent: () => import('./features/empleado/pages/empleado.page').then((m) => m.EmpleadoPage)
   },
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: '**', redirectTo: 'login' }

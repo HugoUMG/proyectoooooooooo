@@ -5,6 +5,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class UserAccount extends BaseEntity {
@@ -18,6 +21,10 @@ public class UserAccount extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleName role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     public String getUsername() {
         return username;
@@ -41,5 +48,13 @@ public class UserAccount extends BaseEntity {
 
     public void setRole(RoleName role) {
         this.role = role;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }

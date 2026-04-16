@@ -16,11 +16,19 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
 
       <div class="card">
         <form [formGroup]="invoiceForm" (ngSubmit)="submit()" class="grid grid-3">
-          <input formControlName="invoiceNumber" placeholder="Número de factura" />
+          <label>Número de factura
+            <input formControlName="invoiceNumber" placeholder="Ej. FAC-2026-0001" />
+          </label>
           <input type="date" formControlName="invoiceDate" />
-          <input type="number" formControlName="totalAmount" placeholder="Total" />
-          <input type="number" formControlName="supplierId" placeholder="ID proveedor" />
-          <input type="number" formControlName="budgetLineId" placeholder="ID partida" />
+          <label>Total
+            <input type="number" formControlName="totalAmount" placeholder="Ej. 15230.50" />
+          </label>
+          <label>ID proveedor
+            <input type="number" formControlName="supplierId" placeholder="Ej. 1" />
+          </label>
+          <label>ID partida presupuestaria
+            <input type="number" formControlName="budgetLineId" placeholder="Ej. 1" />
+          </label>
           <textarea formControlName="notes" placeholder="Notas"></textarea>
           <button type="submit">Registrar factura</button>
         </form>
@@ -34,18 +42,26 @@ export class AdquisicionesPage {
   private readonly api = inject(AssetsApiService);
 
   message = '';
-  readonly invoiceForm = this.fb.nonNullable.group({
+  readonly invoiceForm = this.fb.group({
     invoiceNumber: ['', Validators.required],
     invoiceDate: ['', Validators.required],
-    totalAmount: [0, [Validators.required, Validators.min(0.01)]],
-    supplierId: [0, [Validators.required, Validators.min(1)]],
-    budgetLineId: [0, [Validators.required, Validators.min(1)]],
+    totalAmount: [null, [Validators.required, Validators.min(0.01)]],
+    supplierId: [null, [Validators.required, Validators.min(1)]],
+    budgetLineId: [null, [Validators.required, Validators.min(1)]],
     notes: ['']
   });
 
   submit(): void {
     if (this.invoiceForm.invalid) return;
-    this.api.createInvoice(this.invoiceForm.getRawValue()).subscribe({
+    const payload = this.invoiceForm.getRawValue();
+    this.api.createInvoice({
+      invoiceNumber: payload.invoiceNumber!,
+      invoiceDate: payload.invoiceDate!,
+      totalAmount: payload.totalAmount!,
+      supplierId: payload.supplierId!,
+      budgetLineId: payload.budgetLineId!,
+      notes: payload.notes ?? undefined
+    }).subscribe({
       next: (invoice) => (this.message = `Factura registrada: ${invoice.invoiceNumber}`),
       error: (err) => (this.message = err?.error?.error ?? 'No fue posible registrar la factura.')
     });
