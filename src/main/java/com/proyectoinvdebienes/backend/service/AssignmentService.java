@@ -94,16 +94,4 @@ public class AssignmentService {
     public List<Assignment> listReturned() {
         return assignmentRepository.findByStatus(AssignmentStatus.DEVUELTA);
     }
-
-    public List<Assignment> listByAuthenticatedUser(String username) {
-        Long employeeId = userAccountRepository.findByUsername(username)
-                .map(account -> account.getEmployee() != null ? account.getEmployee().getId() : null)
-                .orElseThrow(() -> new NotFoundException("Usuario autenticado no encontrado"));
-
-        if (employeeId == null) {
-            throw new BusinessException("La cuenta no está vinculada a un empleado.");
-        }
-
-        return assignmentRepository.findByEmployeeId(employeeId);
-    }
 }
