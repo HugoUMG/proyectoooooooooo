@@ -36,9 +36,10 @@ public class AdminUserController {
         return userAccountService.listUsers().stream().map(UserSummary::from).toList();
     }
 
-    public record UserSummary(Long id, String username, String role, LocalDateTime createdAt) {
+    public record UserSummary(Long id, String username, String role, Long employeeId, LocalDateTime createdAt) {
         static UserSummary from(UserAccount account) {
-            return new UserSummary(account.getId(), account.getUsername(), account.getRole().name(), account.getCreatedAt());
+            Long employeeId = account.getEmployee() != null ? account.getEmployee().getId() : null;
+            return new UserSummary(account.getId(), account.getUsername(), account.getRole().name(), employeeId, account.getCreatedAt());
         }
     }
 }
