@@ -25,6 +25,16 @@ public class InventoryService {
         PurchaseInvoice invoice = purchaseInvoiceRepository.findById(request.purchaseInvoiceId())
                 .orElseThrow(() -> new NotFoundException("Factura de adquisición no encontrada"));
 
+        if (request.assetCode() != null && !request.assetCode().isBlank() && assetRepository.existsByAssetCode(request.assetCode())) {
+            throw new BusinessException("El código de activo ya existe. Captura un valor único.");
+        }
+        if (assetRepository.existsBySerialNumber(request.serialNumber())) {
+            throw new BusinessException("El número de serie ya existe. Captura un valor único.");
+        }
+        if (assetRepository.existsByTagValue(request.tagValue())) {
+            throw new BusinessException("La etiqueta del activo ya existe. Captura un valor único.");
+        }
+
         Asset asset = new Asset();
         asset.setAssetCode(request.assetCode() == null || request.assetCode().isBlank() ? generateAssetCode() : request.assetCode());
         asset.setName(request.name());

@@ -19,7 +19,9 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
 
       <div class="card">
         <form [formGroup]="employeeForm" (ngSubmit)="loadEmployeeReport()" class="grid grid-3">
-          <input type="number" formControlName="employeeId" placeholder="Empleado ID" />
+          <label>Empleado ID
+            <input type="number" formControlName="employeeId" placeholder="Ej. 1" />
+          </label>
           <button type="submit">Reporte por empleado</button>
         </form>
         <ul><li *ngFor="let item of employeeAssignments">{{ item.asset.assetCode }} - {{ item.asset.name }} - {{ item.status }}</li></ul>
@@ -47,10 +49,10 @@ export class ReportesPage {
   employeeAssignments: Assignment[] = [];
   upcoming: Asset[] = [];
   message = '';
-  readonly employeeForm = this.fb.nonNullable.group({ employeeId: [0, [Validators.required, Validators.min(1)]] });
+  readonly employeeForm = this.fb.group({ employeeId: [null, [Validators.required, Validators.min(1)]] });
 
   loadSummary(): void { this.api.investedSummary().subscribe({ next: (summary) => (this.totalInvested = summary.totalInvested), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
-  loadEmployeeReport(): void { if (this.employeeForm.invalid) return; this.api.employeeReport(this.employeeForm.getRawValue().employeeId).subscribe({ next: (rows) => (this.employeeAssignments = rows), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
+  loadEmployeeReport(): void { if (this.employeeForm.invalid) return; this.api.employeeReport(this.employeeForm.getRawValue().employeeId!).subscribe({ next: (rows) => (this.employeeAssignments = rows), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
   loadUpcomingDisposals(): void { this.api.upcomingDisposals().subscribe({ next: (rows) => (this.upcoming = rows), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
   download(format: 'excel' | 'pdf'): void { this.api.exportInvested(format).subscribe({ next: (blob) => { const ext = format === 'pdf' ? 'pdf' : 'csv'; const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `reporte-bienes-invertidos.${ext}`; a.click(); URL.revokeObjectURL(url); }, error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
 }

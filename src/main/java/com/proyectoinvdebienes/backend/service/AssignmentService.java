@@ -8,6 +8,7 @@ import com.proyectoinvdebienes.backend.domain.model.Employee;
 import com.proyectoinvdebienes.backend.repository.AssetRepository;
 import com.proyectoinvdebienes.backend.repository.AssignmentRepository;
 import com.proyectoinvdebienes.backend.repository.EmployeeRepository;
+import com.proyectoinvdebienes.backend.repository.UserAccountRepository;
 import com.proyectoinvdebienes.backend.web.dto.CreateAssignmentRequest;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,15 +21,18 @@ public class AssignmentService {
     private final AssignmentRepository assignmentRepository;
     private final AssetRepository assetRepository;
     private final EmployeeRepository employeeRepository;
+    private final UserAccountRepository userAccountRepository;
 
     public AssignmentService(
             AssignmentRepository assignmentRepository,
             AssetRepository assetRepository,
-            EmployeeRepository employeeRepository
+            EmployeeRepository employeeRepository,
+            UserAccountRepository userAccountRepository
     ) {
         this.assignmentRepository = assignmentRepository;
         this.assetRepository = assetRepository;
         this.employeeRepository = employeeRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @Transactional
@@ -81,5 +85,28 @@ public class AssignmentService {
 
     public List<Assignment> listByEmployee(Long employeeId) {
         return assignmentRepository.findByEmployeeId(employeeId);
+    }
+
+    public List<Assignment> listAll() {
+        return assignmentRepository.findAll();
+    }
+
+    public List<Assignment> listReturned() {
+        return assignmentRepository.findByStatus(AssignmentStatus.DEVUELTA);
+    }
+
+    /**
+     * Compatibilidad: soporta controladores que aún llaman este método.
+     */
+    public List<Assignment> listByAuthenticatedUser(String username) {
+        Long employeeId = userAccountRepository.findByUsername(username)
+                .map(user -> user.getEmployee() != null ? user.getEmployee().getId() : null)
+                .orElseThrow(() -> new NotFoundException("Usuario autenticado no encontrado"));
+
+        if (employeeId == null) {
+            throw new BusinessException("La cuenta no está vinculada a un empleado.");
+        }
+
+        return listByEmployee(employeeId);
     }
 }

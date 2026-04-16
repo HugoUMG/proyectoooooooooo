@@ -71,5 +71,6 @@ export interface AdminUser {
   id: number;
   username: string;
   role: string;
+  employeeId?: number;
   createdAt: string;
 }
