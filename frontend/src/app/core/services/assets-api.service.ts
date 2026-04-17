@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AdminUser, Asset, Assignment, BudgetLine, Disposal, InvestedSummary, PurchaseInvoice, Supplier } from '../models/api.models';
+import { AdminUser, Asset, Assignment, BudgetLine, Department, Disposal, Employee, InvestedSummary, PurchaseInvoice, Supplier } from '../models/api.models';
 
 @Injectable({ providedIn: 'root' })
 export class AssetsApiService {
@@ -118,6 +118,19 @@ export class AssetsApiService {
 
   listPendingDisposals(): Observable<Disposal[]> {
     return this.http.get<Disposal[]>(`${this.base}/disposals/pending`);
+  }
+
+
+  listDepartments(): Observable<Department[]> {
+    return this.http.get<Department[]>(`${this.base}/data/departments`);
+  }
+
+  createEmployeeData(payload: { fullName: string; email: string; departmentId: number }): Observable<Employee> {
+    return this.http.post<Employee>(`${this.base}/data/employees`, payload);
+  }
+
+  listEmployees(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.base}/data/employees`);
   }
 
   createUser(payload: { username: string; password: string; role: 'ADMINISTRADOR' | 'COMPRAS' | 'INVENTARIO' | 'EMPLEADO' | 'FINANZAS'; employeeId?: number }): Observable<AdminUser> {

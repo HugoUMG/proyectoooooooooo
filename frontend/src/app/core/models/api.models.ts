@@ -56,7 +56,7 @@ export interface Employee {
 export interface Assignment {
   id: number;
   asset: Asset;
-  employee: Employee;
+  employee?: Employee;
   assignedAt: string;
   expectedReturnAt?: string;
   returnedAt?: string;

@@ -26,7 +26,17 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
         </form>
         <table *ngIf="employeeAssignments.length">
           <thead><tr><th>Empleado ID</th><th>Código</th><th>Nombre</th><th>Valor unitario</th><th>Asignación</th><th>Devolución</th><th>Estado</th></tr></thead>
-          <tbody><tr *ngFor="let item of employeeAssignments"><td>{{ item.employee.id }}</td><td>{{ item.asset.assetCode }}</td><td>{{ item.asset.name }}</td><td>{{ item.asset.acquisitionCost }}</td><td>{{ item.assignedAt }}</td><td>{{ item.returnedAt || '-' }}</td><td>{{ item.asset.status }}</td></tr></tbody>
+          <tbody>
+            <tr *ngFor="let item of employeeAssignments">
+              <td>{{ employeeIdDisplay(item) }}</td>
+              <td>{{ item.asset?.assetCode || '-' }}</td>
+              <td>{{ item.asset?.name || '-' }}</td>
+              <td>{{ item.asset?.acquisitionCost ?? '-' }}</td>
+              <td>{{ item.assignedAt || '-' }}</td>
+              <td>{{ item.returnedAt || '-' }}</td>
+              <td>{{ item.asset?.status || item.status || '-' }}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
@@ -55,10 +65,15 @@ export class ReportesPage {
   employeeAssignments: Assignment[] = [];
   upcoming: Asset[] = [];
   message = '';
+  selectedEmployeeId: number | null = null;
   readonly employeeForm = this.fb.group({ employeeId: [null, [Validators.required, Validators.min(1)]] });
 
   loadSummary(): void { this.api.investedSummary().subscribe({ next: (summary) => (this.totalInvested = summary.totalInvested), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
-  loadEmployeeReport(): void { if (this.employeeForm.invalid) return; this.api.employeeReport(this.employeeForm.getRawValue().employeeId!).subscribe({ next: (rows) => (this.employeeAssignments = rows), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
+  loadEmployeeReport(): void { if (this.employeeForm.invalid) return; const employeeId = this.employeeForm.getRawValue().employeeId!; this.selectedEmployeeId = employeeId; this.api.employeeReport(employeeId).subscribe({ next: (rows) => (this.employeeAssignments = rows ?? []), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
   loadUpcomingDisposals(): void { this.api.upcomingDisposals().subscribe({ next: (rows) => (this.upcoming = rows), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
   download(format: 'excel' | 'pdf'): void { this.api.exportInvested(format).subscribe({ next: (blob) => { const ext = format === 'pdf' ? 'pdf' : 'csv'; const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `reporte-bienes-invertidos.${ext}`; a.click(); URL.revokeObjectURL(url); }, error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
+
+  employeeIdDisplay(item: Assignment): string | number {
+    return item?.employee?.id ?? this.selectedEmployeeId ?? 'desasignado';
+  }
 }

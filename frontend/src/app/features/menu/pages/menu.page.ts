@@ -28,6 +28,7 @@ import { AuthService } from '../../../core/services/auth.service';
           <button *ngIf="auth.canAccessModule('reportes')" type="button" (click)="go('/reportes')">Reportes</button>
           <button *ngIf="auth.canAccessModule('empleado')" type="button" (click)="go('/empleado')">Mis activos</button>
           <button *ngIf="auth.canAccessModule('catalogos')" type="button" (click)="go('/catalogos')">Proveedores y partidas</button>
+          <button *ngIf="auth.canAccessModule('admin-empleados')" type="button" (click)="go('/admin-empleados')">Empleados</button>
         </div>
       </div>
 

@@ -57,7 +57,7 @@ export class AuthService {
     return btoa(`${this.usernameState()}:${this.passwordState()}`);
   }
 
-  canAccessModule(module: 'adquisiciones' | 'inventario' | 'asignaciones' | 'bajas' | 'reportes' | 'empleado' | 'catalogos'): boolean {
+  canAccessModule(module: 'adquisiciones' | 'inventario' | 'asignaciones' | 'bajas' | 'reportes' | 'empleado' | 'catalogos' | 'admin-empleados'): boolean {
     const role = this.roleState();
     if (!role) return false;
     if (role === 'ADMINISTRADOR') return true;
