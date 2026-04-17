@@ -24,7 +24,7 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
             <input formControlName="serialNumber" placeholder="Ej. SN-2026-0001" />
           </label>
           <input formControlName="acquisitionDate" type="date" />
-          <label>Costo de adquisición
+          <label>Valor unitario
             <input formControlName="acquisitionCost" type="number" placeholder="Ej. 12999.90" />
           </label>
           <label>Tipo de etiqueta
@@ -33,8 +33,8 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
           <label>Valor de etiqueta
             <input formControlName="tagValue" placeholder="Ej. TAG-0001" />
           </label>
-          <label>Ubicación
-            <input formControlName="location" placeholder="Ej. Almacén central - Estante B3" />
+          <label>Ubicación (opcional)
+            <input formControlName="location" placeholder="Por defecto: Almacén central" />
           </label>
           <label>ID de factura
             <input formControlName="purchaseInvoiceId" type="number" placeholder="Ej. 1" />
@@ -50,8 +50,17 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
       <div class="card">
         <div class="between"><h3>Catálogo maestro</h3><button type="button" (click)="loadAssets()">Actualizar</button></div>
         <table *ngIf="assets.length">
-          <thead><tr><th>Código</th><th>Nombre</th><th>Estado</th><th>Ubicación</th></tr></thead>
-          <tbody><tr *ngFor="let asset of assets"><td>{{ asset.assetCode }}</td><td>{{ asset.name }}</td><td>{{ asset.status }}</td><td>{{ asset.location }}</td></tr></tbody>
+          <thead><tr><th>ID</th><th>Código</th><th>Nombre</th><th>Ubicación</th><th>Estado</th><th>Valor unitario</th><th>QR</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let asset of assets">
+              <td>{{ asset.id }}</td><td>{{ asset.assetCode }}</td><td>{{ asset.name }}</td><td>{{ asset.location }}</td><td>{{ asset.status }}</td><td>{{ asset.acquisitionCost }}</td>
+              <td>
+                <button type="button" (click)="toggleQr(asset.id)">Mostrar QR</button>
+                <a [href]="api.inventoryAssetQr(asset.id)" target="_blank">PNG</a>
+                <div *ngIf="qrVisibleId === asset.id"><img [src]="api.inventoryAssetQr(asset.id)" alt="QR" width="120" /></div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </section>
@@ -59,9 +68,10 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
 })
 export class InventarioPage implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly api = inject(AssetsApiService);
+  readonly api = inject(AssetsApiService);
   assets: Asset[] = [];
   message = '';
+  qrVisibleId: number | null = null;
 
   readonly assetForm = this.fb.group({
     assetCode: [''],
@@ -72,7 +82,7 @@ export class InventarioPage implements OnInit {
     acquisitionCost: [null, [Validators.required, Validators.min(0.01)]],
     tagType: this.fb.nonNullable.control<'QR' | 'RFID'>('QR', Validators.required),
     tagValue: ['', Validators.required],
-    location: ['', Validators.required],
+    location: ['Almacén central'],
     purchaseInvoiceId: [null, [Validators.required, Validators.min(1)]]
   });
 
@@ -89,11 +99,15 @@ export class InventarioPage implements OnInit {
       acquisitionCost: payload.acquisitionCost!,
       tagType: payload.tagType!,
       tagValue: payload.tagValue!,
-      location: payload.location!,
+      location: payload.location ?? undefined,
       purchaseInvoiceId: payload.purchaseInvoiceId!
-    }).subscribe({ next: () => this.loadAssets(), error: (err) => (this.message = err?.error?.error ?? 'Error') });
+    }).subscribe({ next: () => { this.assetForm.patchValue({ location: 'Almacén central' }); this.loadAssets(); }, error: (err) => (this.message = err?.error?.error ?? 'Error') });
   }
   loadAssets(): void {
     this.api.listAssets().subscribe({ next: (assets) => (this.assets = assets), error: () => (this.message = 'No se pudo cargar inventario') });
+  }
+
+  toggleQr(assetId: number): void {
+    this.qrVisibleId = this.qrVisibleId === assetId ? null : assetId;
   }
 }
