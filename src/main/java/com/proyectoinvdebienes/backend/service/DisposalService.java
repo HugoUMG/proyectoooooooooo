@@ -8,6 +8,7 @@ import com.proyectoinvdebienes.backend.repository.AssetRepository;
 import com.proyectoinvdebienes.backend.repository.DisposalRepository;
 import com.proyectoinvdebienes.backend.web.dto.ApproveDisposalRequest;
 import com.proyectoinvdebienes.backend.web.dto.CreateDisposalRequest;
+import com.proyectoinvdebienes.backend.web.dto.RejectDisposalRequest;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class DisposalService {
         Disposal disposal = new Disposal();
         disposal.setAsset(asset);
         disposal.setReason(request.reason());
-        disposal.setDisposalType(request.disposalType());
+        disposal.setDisposalType(request.disposalType() == null || request.disposalType().isBlank() ? "BAJA" : request.disposalType());
         disposal.setStatus(DisposalStatus.SOLICITADA);
         disposal.setRequestedBy(request.requestedBy());
         disposal.setRequestedAt(LocalDate.now());
@@ -53,6 +54,19 @@ public class DisposalService {
         Asset asset = disposal.getAsset();
         asset.setStatus(AssetStatus.DADO_DE_BAJA);
         assetRepository.save(asset);
+
+        return disposalRepository.save(disposal);
+    }
+
+    @Transactional
+    public Disposal rejectDisposal(Long disposalId, RejectDisposalRequest request) {
+        Disposal disposal = disposalRepository.findById(disposalId)
+                .orElseThrow(() -> new NotFoundException("Solicitud de baja no encontrada"));
+
+        disposal.setStatus(DisposalStatus.RECHAZADA);
+        disposal.setApprovedBy(request.approvedBy());
+        disposal.setApprovedAt(LocalDate.now());
+        disposal.setFinalValue(null);
 
         return disposalRepository.save(disposal);
     }

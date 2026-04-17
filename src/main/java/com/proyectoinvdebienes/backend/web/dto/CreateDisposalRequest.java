@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 public record CreateDisposalRequest(
         @NotNull Long assetId,
         @NotBlank String reason,
-        @NotBlank String disposalType,
+        String disposalType,
         @NotBlank String requestedBy
 ) {
 }

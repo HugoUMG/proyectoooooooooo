@@ -56,12 +56,42 @@ public class AssignmentService {
         assignment.setEmployee(employee);
         assignment.setAssignedAt(request.assignedAt());
         assignment.setExpectedReturnAt(request.expectedReturnAt());
-        assignment.setStatus(AssignmentStatus.ACTIVA);
-        assignment.setDigitalSignature(request.digitalSignature());
-        assignment.setReceiptConfirmation(request.receiptConfirmation());
+        assignment.setStatus(AssignmentStatus.PENDIENTE_CONFIRMACION);
+        assignment.setDigitalSignature("PENDIENTE_CONFIRMACION");
+        assignment.setReceiptConfirmation("PENDIENTE_CONFIRMACION");
 
-        asset.setCurrentCustodian(employee);
+        return assignmentRepository.save(assignment);
+    }
+
+    @Transactional
+    public Assignment confirmAssignment(Long assignmentId, Long employeeId) {
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new NotFoundException("Asignación no encontrada"));
+
+        if (!assignment.getEmployee().getId().equals(employeeId)) {
+            throw new BusinessException("No puedes confirmar una asignación de otro empleado");
+        }
+
+        if (assignment.getStatus() != AssignmentStatus.PENDIENTE_CONFIRMACION) {
+            throw new BusinessException("La asignación ya fue confirmada o cerrada");
+        }
+
+        Asset asset = assignment.getAsset();
+        if (asset.getStatus() == AssetStatus.DADO_DE_BAJA) {
+            throw new BusinessException("No se puede confirmar asignación de un activo dado de baja");
+        }
+
+        String departmentName = assignment.getEmployee().getDepartment() != null
+                ? assignment.getEmployee().getDepartment().getName()
+                : "ALMACEN_CENTRAL";
+
+        assignment.setStatus(AssignmentStatus.ACTIVA);
+        assignment.setReceiptConfirmation("CONFIRMADA_POR_EMPLEADO");
+        assignment.setDigitalSignature("TERMINOS_ACEPTADOS");
+
+        asset.setCurrentCustodian(assignment.getEmployee());
         asset.setStatus(AssetStatus.ASIGNADO);
+        asset.setLocation(departmentName);
         assetRepository.save(asset);
 
         return assignmentRepository.save(assignment);
@@ -72,12 +102,17 @@ public class AssignmentService {
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new NotFoundException("Asignación no encontrada"));
 
+        if (assignment.getStatus() != AssignmentStatus.ACTIVA) {
+            throw new BusinessException("Solo se pueden devolver asignaciones activas");
+        }
+
         assignment.setStatus(AssignmentStatus.DEVUELTA);
         assignment.setReturnedAt(LocalDate.now());
 
         Asset asset = assignment.getAsset();
         asset.setStatus(AssetStatus.EN_ALMACEN);
         asset.setCurrentCustodian(null);
+        asset.setLocation("Almacén central");
         assetRepository.save(asset);
 
         return assignmentRepository.save(assignment);
@@ -85,6 +120,10 @@ public class AssignmentService {
 
     public List<Assignment> listByEmployee(Long employeeId) {
         return assignmentRepository.findByEmployeeId(employeeId);
+    }
+
+    public List<Assignment> listByEmployeeAndStatus(Long employeeId, AssignmentStatus status) {
+        return assignmentRepository.findByEmployeeIdAndStatus(employeeId, status);
     }
 
     public List<Assignment> listAll() {
@@ -95,10 +134,7 @@ public class AssignmentService {
         return assignmentRepository.findByStatus(AssignmentStatus.DEVUELTA);
     }
 
-    /**
-     * Compatibilidad: soporta controladores que aún llaman este método.
-     */
-    public List<Assignment> listByAuthenticatedUser(String username) {
+    public Long findEmployeeIdByUsername(String username) {
         Long employeeId = userAccountRepository.findByUsername(username)
                 .map(user -> user.getEmployee() != null ? user.getEmployee().getId() : null)
                 .orElseThrow(() -> new NotFoundException("Usuario autenticado no encontrado"));
@@ -106,7 +142,6 @@ public class AssignmentService {
         if (employeeId == null) {
             throw new BusinessException("La cuenta no está vinculada a un empleado.");
         }
-
-        return listByEmployee(employeeId);
+        return employeeId;
     }
 }

@@ -16,7 +16,7 @@ public record CreateAssetRequest(
         @NotNull @DecimalMin(value = "0.01") BigDecimal acquisitionCost,
         @NotNull TagType tagType,
         @NotBlank String tagValue,
-        @NotBlank String location,
+        String location,
         @NotNull Long purchaseInvoiceId
 ) {
 }

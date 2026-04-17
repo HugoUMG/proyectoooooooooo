@@ -4,6 +4,7 @@ import com.proyectoinvdebienes.backend.domain.model.Disposal;
 import com.proyectoinvdebienes.backend.service.DisposalService;
 import com.proyectoinvdebienes.backend.web.dto.ApproveDisposalRequest;
 import com.proyectoinvdebienes.backend.web.dto.CreateDisposalRequest;
+import com.proyectoinvdebienes.backend.web.dto.RejectDisposalRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,11 @@ public class DisposalController {
     @PostMapping("/{id}/approve")
     public Disposal approveDisposal(@PathVariable Long id, @Valid @RequestBody ApproveDisposalRequest request) {
         return disposalService.approveDisposal(id, request);
+    }
+
+    @PostMapping("/{id}/reject")
+    public Disposal rejectDisposal(@PathVariable Long id, @Valid @RequestBody RejectDisposalRequest request) {
+        return disposalService.rejectDisposal(id, request);
     }
 
     @GetMapping("/pending")
