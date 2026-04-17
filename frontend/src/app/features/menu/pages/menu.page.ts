@@ -13,13 +13,13 @@ import { AuthService } from '../../../core/services/auth.service';
       <div class="card">
         <div class="between">
           <div>
-            <h1>Interfaz General (Menú)</h1>
+            <h1>Menú Principal</h1>
             <p class="muted">Sesión activa: <strong>{{ auth.username() }}</strong> ({{ auth.role() }})</p>
           </div>
           <button type="button" (click)="logout()">Cerrar sesión</button>
         </div>
 
-        <p>Selecciona un módulo según permisos:</p>
+        <p>Modulos:</p>
         <div class="grid grid-3">
           <button *ngIf="auth.canAccessModule('adquisiciones')" type="button" (click)="go('/adquisiciones')">Adquisiciones</button>
           <button *ngIf="auth.canAccessModule('inventario')" type="button" (click)="go('/inventario')">Inventario</button>
@@ -31,8 +31,8 @@ import { AuthService } from '../../../core/services/auth.service';
       </div>
 
       <div class="card" *ngIf="auth.isAdmin()">
-        <h2>Alta de usuario (solo admin)</h2>
-        <p class="muted">Este registro crea usuarios en el backend para autenticación HTTP Basic.</p>
+        <h2>Creación de usuario</h2>
+        <p class="muted">Registro de creación de usuarios en el sistema.</p>
 
         <form [formGroup]="userForm" (ngSubmit)="createUser()" class="grid grid-3">
           <input formControlName="username" placeholder="nuevo usuario" />

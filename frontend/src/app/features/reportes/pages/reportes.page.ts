@@ -14,7 +14,7 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
 
       <div class="card">
         <button type="button" (click)="loadSummary()">Cargar total invertido</button>
-        <p *ngIf="totalInvested !== null"><strong>{{ totalInvested | currency : 'USD' }}</strong></p>
+        <p *ngIf="totalInvested !== null"><strong>{{ totalInvested | currency : 'Q' }}</strong></p>
       </div>
 
       <div class="card">

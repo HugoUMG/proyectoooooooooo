@@ -44,7 +44,6 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
           </label>
           <button type="submit">Registrar activo</button>
         </form>
-        <small class="muted">Estados permitidos en backend: EN_ALMACEN, ASIGNADO, EN_TRASLADO, EN_REVISION, DADO_DE_BAJA.</small>
         <p *ngIf="message">{{ message }}</p>
       </div>
 

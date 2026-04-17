@@ -2,14 +2,17 @@ com\proyectoinvdebienes\backend\service\InventoryService.class
 com\proyectoinvdebienes\backend\web\controller\DataSeedController.class
 com\proyectoinvdebienes\backend\web\dto\CreateAssetRequest.class
 com\proyectoinvdebienes\backend\web\dto\CreateDisposalRequest.class
+com\proyectoinvdebienes\backend\web\controller\EmployeeController.class
 com\proyectoinvdebienes\backend\web\controller\AssignmentController.class
 com\proyectoinvdebienes\backend\domain\model\Supplier.class
 com\proyectoinvdebienes\backend\repository\UserAccountRepository.class
+com\proyectoinvdebienes\backend\web\controller\AuthController$AuthUser.class
 com\proyectoinvdebienes\backend\web\controller\AcquisitionController.class
 com\proyectoinvdebienes\backend\repository\AssetRepository.class
 com\proyectoinvdebienes\backend\web\dto\CreateEmployeeDataRequest.class
 com\proyectoinvdebienes\backend\domain\model\Asset.class
 com\proyectoinvdebienes\backend\repository\SupplierRepository.class
+com\proyectoinvdebienes\backend\web\controller\AuthController.class
 com\proyectoinvdebienes\backend\service\DisposalService.class
 com\proyectoinvdebienes\backend\service\NotFoundException.class
 com\proyectoinvdebienes\backend\web\dto\ApproveDisposalRequest.class

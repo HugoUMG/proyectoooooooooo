@@ -21,10 +21,6 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
         <p *ngIf="!assignments.length" class="muted">No tienes activos asignados por ahora.</p>
       </div>
 
-      <div class="card">
-        <h3>Solicitudes / incidencias</h3>
-        <p class="muted">Este módulo quedó preparado para que el empleado vea sus activos. Si quieres, en el siguiente paso te implemento el registro formal de incidencias con API y tabla dedicada.</p>
-      </div>
 
       <p *ngIf="message" class="error">{{ message }}</p>
     </section>

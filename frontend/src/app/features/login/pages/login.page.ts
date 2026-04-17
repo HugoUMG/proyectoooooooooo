@@ -11,13 +11,9 @@ import { AuthService } from '../../../core/services/auth.service';
     <section class="shell centered">
       <div class="card auth-card">
         <h1>Ingreso al Sistema de Activos</h1>
-        <p class="muted">Primera interfaz: autenticación obligatoria.</p>
+        <p class="muted"></p>
 
-        <div class="admin-box">
-          <strong>Credenciales admin (explícitas):</strong>
-          <div>Usuario: <code>admin</code></div>
-          <div>Contraseña: <code>admin123</code></div>
-        </div>
+
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="stack">
           <label>Usuario</label>
