@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@JsonIgnoreProperties({"purchaseInvoice", "currentCustodian"})
+@JsonIgnoreProperties({"purchaseInvoice"})
 public class Asset extends BaseEntity {
 
     @Column(nullable = false, unique = true)
