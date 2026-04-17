@@ -1,5 +1,21 @@
 export type TagType = 'QR' | 'RFID';
 
+export interface Supplier {
+  id: number;
+  name: string;
+  taxId: string;
+  email: string;
+  phone?: string;
+  active: boolean;
+}
+
+export interface BudgetLine {
+  id: number;
+  code: string;
+  description: string;
+  allocatedAmount: number;
+}
+
 export interface PurchaseInvoice {
   id: number;
   invoiceNumber: string;
@@ -45,8 +61,8 @@ export interface Assignment {
   expectedReturnAt?: string;
   returnedAt?: string;
   status: string;
-  digitalSignature: string;
-  receiptConfirmation: string;
+  digitalSignature?: string;
+  receiptConfirmation?: string;
 }
 
 export interface Disposal {
@@ -65,7 +81,6 @@ export interface Disposal {
 export interface InvestedSummary {
   totalInvested: number;
 }
-
 
 export interface AdminUser {
   id: number;

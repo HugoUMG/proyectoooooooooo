@@ -24,12 +24,18 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
           </label>
           <button type="submit">Reporte por empleado</button>
         </form>
-        <ul><li *ngFor="let item of employeeAssignments">{{ item.asset.assetCode }} - {{ item.asset.name }} - {{ item.status }}</li></ul>
+        <table *ngIf="employeeAssignments.length">
+          <thead><tr><th>Empleado ID</th><th>Código</th><th>Nombre</th><th>Valor unitario</th><th>Asignación</th><th>Devolución</th><th>Estado</th></tr></thead>
+          <tbody><tr *ngFor="let item of employeeAssignments"><td>{{ item.employee.id }}</td><td>{{ item.asset.assetCode }}</td><td>{{ item.asset.name }}</td><td>{{ item.asset.acquisitionCost }}</td><td>{{ item.assignedAt }}</td><td>{{ item.returnedAt || '-' }}</td><td>{{ item.asset.status }}</td></tr></tbody>
+        </table>
       </div>
 
       <div class="card">
-        <button type="button" (click)="loadUpcomingDisposals()">Próximos a baja</button>
-        <ul><li *ngFor="let asset of upcoming">{{ asset.assetCode }} - {{ asset.name }}</li></ul>
+        <button type="button" (click)="loadUpcomingDisposals()">Reporte general</button>
+        <table *ngIf="upcoming.length">
+          <thead><tr><th>ID</th><th>Código</th><th>Nombre</th><th>Asignado a</th><th>Valor</th><th>Ingreso</th><th>Estado</th></tr></thead>
+          <tbody><tr *ngFor="let asset of upcoming"><td>{{ asset.id }}</td><td>{{ asset.assetCode }}</td><td>{{ asset.name }}</td><td>{{ asset.currentCustodian?.id || 'desasignado' }}</td><td>{{ asset.acquisitionCost }}</td><td>{{ asset.acquisitionDate }}</td><td>{{ asset.status }}</td></tr></tbody>
+        </table>
       </div>
 
       <div class="card grid grid-3">

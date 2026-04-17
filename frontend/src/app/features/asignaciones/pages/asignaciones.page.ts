@@ -22,12 +22,6 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
           </label>
           <input type="date" formControlName="assignedAt" />
           <input type="date" formControlName="expectedReturnAt" />
-          <label>Firma digital
-            <input formControlName="digitalSignature" placeholder="Ej. firma_maria_gomez" />
-          </label>
-          <label>Confirmación de recibido
-            <input formControlName="receiptConfirmation" placeholder="Ej. RECIBIDO-OK" />
-          </label>
           <button type="submit">Registrar asignación</button>
         </form>
       </div>
@@ -49,7 +43,10 @@ import { AssetsApiService } from '../../../core/services/assets-api.service';
           <button type="submit">Ver historial</button>
           <button type="button" (click)="loadReturns()">Ver devoluciones</button>
         </form>
-        <ul><li *ngFor="let item of assignments">#{{ item.id }} - {{ item.asset.name }} - {{ item.status }}</li></ul>
+        <table *ngIf="assignments.length">
+          <thead><tr><th>Asignación</th><th>Código del bien</th><th>Nombre del bien</th><th>Estado</th><th>Fecha asignación</th><th>Próxima devolución</th><th>Fecha devolución</th></tr></thead>
+          <tbody><tr *ngFor="let item of assignments"><td>{{ item.id }}</td><td>{{ item.asset.assetCode }}</td><td>{{ item.asset.name }}</td><td>{{ item.status }}</td><td>{{ item.assignedAt }}</td><td>{{ item.expectedReturnAt || '-' }}</td><td>{{ item.returnedAt || '-' }}</td></tr></tbody>
+        </table>
         <p *ngIf="message">{{ message }}</p>
       </div>
     </section>
@@ -65,9 +62,7 @@ export class AsignacionesPage {
     assetId: [null, [Validators.required, Validators.min(1)]],
     employeeId: [null, [Validators.required, Validators.min(1)]],
     assignedAt: ['', Validators.required],
-    expectedReturnAt: [''],
-    digitalSignature: ['', Validators.required],
-    receiptConfirmation: ['', Validators.required]
+    expectedReturnAt: ['']
   });
   readonly returnForm = this.fb.group({ assignmentId: [null, [Validators.required, Validators.min(1)]] });
   readonly employeeForm = this.fb.group({ employeeId: [null, [Validators.required, Validators.min(1)]] });
@@ -79,10 +74,8 @@ export class AsignacionesPage {
       assetId: payload.assetId!,
       employeeId: payload.employeeId!,
       assignedAt: payload.assignedAt!,
-      expectedReturnAt: payload.expectedReturnAt ?? undefined,
-      digitalSignature: payload.digitalSignature!,
-      receiptConfirmation: payload.receiptConfirmation!
-    }).subscribe({ next: () => (this.message = 'Asignación registrada'), error: (err) => (this.message = err?.error?.error ?? 'Error') });
+      expectedReturnAt: payload.expectedReturnAt ?? undefined
+    }).subscribe({ next: () => (this.message = 'Asignación registrada en estado pendiente de confirmación del empleado'), error: (err) => (this.message = err?.error?.error ?? 'Error') });
   }
   returnAsset(): void { if (this.returnForm.invalid) return; this.api.returnAssignment(this.returnForm.getRawValue().assignmentId!).subscribe({ next: () => (this.message = 'Devolución registrada'), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
   loadEmployeeAssignments(): void { if (this.employeeForm.invalid) return; this.api.listAssignmentsByEmployee(this.employeeForm.getRawValue().employeeId!).subscribe({ next: (rows) => (this.assignments = rows), error: (err) => (this.message = err?.error?.error ?? 'Error') }); }
