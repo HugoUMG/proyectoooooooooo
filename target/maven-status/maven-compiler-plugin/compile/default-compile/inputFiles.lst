@@ -48,6 +48,7 @@ C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\co
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\controller\InventoryController.java
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\controller\ReportsController.java
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\ApproveDisposalRequest.java
+C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\ConfirmAssignmentRequest.java
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\CreateAssetRequest.java
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\CreateAssignmentRequest.java
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\CreateBudgetLineRequest.java
@@ -57,3 +58,4 @@ C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\co
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\CreatePurchaseInvoiceRequest.java
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\CreateSupplierRequest.java
 C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\CreateUserRequest.java
+C:\Users\hgo32\OneDrive\Documentos\PROYECTOSS\ProyectoInvBienes\src\main\java\com\proyectoinvdebienes\backend\web\dto\RejectDisposalRequest.java

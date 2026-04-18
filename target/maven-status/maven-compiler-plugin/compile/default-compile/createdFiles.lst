@@ -16,6 +16,7 @@ com\proyectoinvdebienes\backend\web\controller\AuthController.class
 com\proyectoinvdebienes\backend\service\DisposalService.class
 com\proyectoinvdebienes\backend\service\NotFoundException.class
 com\proyectoinvdebienes\backend\web\dto\ApproveDisposalRequest.class
+com\proyectoinvdebienes\backend\web\dto\RejectDisposalRequest.class
 com\proyectoinvdebienes\backend\domain\model\PurchaseInvoice.class
 com\proyectoinvdebienes\backend\web\dto\CreatePurchaseInvoiceRequest.class
 com\proyectoinvdebienes\backend\domain\model\BudgetLine.class
@@ -46,6 +47,7 @@ com\proyectoinvdebienes\backend\HealthController.class
 com\proyectoinvdebienes\backend\web\controller\InventoryController.class
 com\proyectoinvdebienes\backend\service\AssignmentService.class
 com\proyectoinvdebienes\backend\service\BusinessException.class
+com\proyectoinvdebienes\backend\web\dto\ConfirmAssignmentRequest.class
 com\proyectoinvdebienes\backend\web\dto\CreateAssignmentRequest.class
 com\proyectoinvdebienes\backend\web\dto\CreateBudgetLineRequest.class
 com\proyectoinvdebienes\backend\BackendApplication.class
